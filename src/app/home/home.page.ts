@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { NavController, MenuController } from '@ionic/angular';
+import { CredenciasDTO } from '../models/credencias.dto';
 
 @Component({
   selector: 'app-home',
@@ -7,6 +9,27 @@ import { Component } from '@angular/core';
 })
 export class HomePage {
 
-  constructor() {}
+  creds : CredenciasDTO = {
+    email: "",
+    senha: ""
+  }
+
+  constructor(
+    public navCtrl: NavController,
+    public menu: MenuController
+  ) {}
+
+  ionViewWillEnter() {
+    this.menu.enable(false, "MenuApp");
+  }
+    
+  ionViewDidLeave() {
+    this.menu.enable(true, "MenuApp");
+  }
+
+  login(){
+    console.log(this.creds);
+    this.navCtrl.navigateRoot('/categorias');
+  }
 
 }
