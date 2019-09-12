@@ -14,7 +14,8 @@ const routes: Routes = [
   { 
     path: 'categorias', 
     loadChildren: () => import('./categorias/categorias.module').then(m => m.CategoriasPageModule)
-  }
+  },
+  { path: 'profile', loadChildren: './profile/profile.module#ProfilePageModule' }
 ];
 
 @NgModule({
