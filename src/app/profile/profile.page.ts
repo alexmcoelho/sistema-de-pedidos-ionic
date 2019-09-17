@@ -32,7 +32,15 @@ export class ProfilePage implements OnInit {
         this.cliente = responde;
         this.getImageIfExists();
       },
-      error => {});
+      error => {
+        if(error.status == 403){
+          this.navCtrl.navigateRoot('/home');
+        }
+      });
+    }
+    //caso ocorra alguma problema na hora de obter o localUser
+    else{
+      this.navCtrl.navigateRoot('/home');
     }
   }
 

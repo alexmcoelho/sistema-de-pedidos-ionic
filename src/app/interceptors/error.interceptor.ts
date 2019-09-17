@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs'; // IMPORTANTE: IMPORT ATUALIZADO
 import { catchError } from 'rxjs/operators';
+import { StorageService } from '../services/storage.service';
 /* import { StorageService } from '../services/storage.service';
 import { AlertController } from 'ionic-angular/components/alert/alert-controller';
 import { FieldMessage } from '../models/fieldmessage'; */
@@ -9,30 +10,50 @@ import { FieldMessage } from '../models/fieldmessage'; */
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
 
-    constructor() {
+    constructor(
+        public storage: StorageService
+    ) {
     }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return next.handle(req).pipe()
         .pipe(
             catchError(error => {
-               if( !error.status ){
-                    error = JSON.parse(error);
-                }
-                
-                console.log("Erro detectado pelo interceptor")
                 let errorObj = error;
-                if(error.error){
-                    errorObj = error.error;
+                if (errorObj.error) {
+                    errorObj = errorObj.error;
                 }
+                if (!errorObj.status) {
+                    errorObj = JSON.parse(errorObj);
+                }
+    
+                console.log("Erro detectado pelo interceptor:");
                 console.log(errorObj);
+    
+                switch(errorObj.status) {
+                    /* case 401:
+                    this.handle401();
+                    break; */
+    
+                    case 403:
+                    this.handle403();
+                    break;
+    
+                   /*  case 422:
+                    this.handle422(errorObj);
+                    break;
+    
+                    default:
+                    this.handleDefaultEror(errorObj); */
+                }
 
                 return throwError(error.error);
             })) as any;
     }
 
-     handle403() {
-        //this.storage.setLocalUser(null);
+    /* Caso tiver um possível localUser inválido ele receberá null */
+    handle403() {
+        this.storage.setLocalUser(null);
     }
 
     /*handle401() {
